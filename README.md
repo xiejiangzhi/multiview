@@ -1,8 +1,7 @@
 # Multiview
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/multiview`. To experiment with that code, run `bin/console` for an interactive prompt.
+Support multiple versions for Rails views
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -16,13 +15,97 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install multiview
 
 ## Usage
 
-TODO: Write usage instructions here
+### We project
+
+`app/controllers/topics_controller.rb`
+
+```
+class TopicsController < ApplicationController
+  def index
+    render plain: 'hello'
+  end
+end
+```
+
+`app/controllers/v2/topics_controller.rb`
+
+```
+class V2::TopicsController < ApplicationController
+  def index
+    render plain: 'hello v2'
+  end
+end
+```
+
+`config/routes.rb`
+
+```
+resources :topics
+```
+
+### Init
+
+`config/initializers/multiview.rb`
+
+```
+$multiview = Multiview::Manager.new({
+  'topics' => 'v2'
+})
+```
+
+
+### Redispatch request by filter of controller
+
+When get `/topics`, should redispatch to V2::TopicsController, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => 'v1'}`, it will call `TopicsController`
+
+```
+class ApplicationController < ActionController::Base
+  before_aciton :set_view_version_filter
+
+  def set_view_version_filter
+    $multiview.redispatch(self)
+
+    # or 
+    # $multiview.redispatch(self, params[:controller], params[:action])
+
+    # if exist V3::XxxController, should to call V3::XxxController
+    # if not, should to call XxxController
+    # $multiview.redispatch(self, params[:controller], params[:action], 'v3')
+  end
+end
+```
+
+### Dispatch request by middleware
+
+```
+class MultiviewMiddleware
+  def initialize(app)
+    @app = @app
+  end
+
+  def call(env)
+    path_info = Rails.application.routes.recognize_path(env['PATH_INFO'])
+
+    if path_info && path_info[:contorller]
+      $multiview.dispatch(env, path_info[:controller], path_info[:action])
+      # or 
+      # $multiview.dispatch(env, path_info[:controller], path_info[:action], 'v2')
+    else
+      @app.call(env)
+    end
+  end
+end
+```
+
+`config/application.rb`
+
+```
+config.middleware.insert_before Rails.application.routes, MultiviewMiddleware
+```
+
 
 ## Development
 
