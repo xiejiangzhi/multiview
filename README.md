@@ -74,11 +74,15 @@ class ApplicationController < ActionController::Base
     # $multiview.redispatch(self, params[:controller], params[:action])
 
     # if exist V3::XxxController, should to call V3::XxxController
-    # if not, should to call XxxController
+    # if not, should to call XxxController and prepend v3 views path
+    # when you just want to change something for views, you should not to redefined a controller for the version
     # $multiview.redispatch(self, params[:controller], params[:action], 'v3')
   end
 end
 ```
+
+Limitation: We only overwrite those action about already defined.
+
 
 ### Dispatch request by middleware
 
@@ -107,6 +111,11 @@ end
 ```
 config.middleware.insert_before Rails.application.routes, MultiviewMiddleware
 ```
+
+Limitation: Depend Rails.application.routes.recognize_path, if you have some specific routes, might it cannot work.
+
+Anyway, it soloved that problem of `before_action`
+
 
 
 ## Development

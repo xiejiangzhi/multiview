@@ -5,7 +5,7 @@ module Multiview
     # Params:
     #   config: {controller_path: version
     def initialize(versions_map)
-      @versions_map = versions_map
+      @versions_map = versions_map.symbolize_keys
     end
 
     def dispatch(env, controller_path, action_name, version = nil)
@@ -57,6 +57,5 @@ module Multiview
       Rails.logger.warn("[Multiview] Prepend view path app/views/#{version}")
       controller.prepend_view_path(Rails.root.join("app/views/#{version}"))
     end
-
   end
 end

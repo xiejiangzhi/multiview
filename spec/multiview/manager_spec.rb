@@ -1,5 +1,5 @@
 RSpec.describe Multiview::Manager do
-  subject { Multiview::Manager.new({}) }
+  subject { Multiview::Manager.new({'test' => 'v2'}) }
   let(:env) { Rack::MockRequest.env_for('/') }
   let(:req) { ActionDispatch::Request.new(env) }
   let(:v1_cls) do
@@ -58,8 +58,8 @@ RSpec.describe Multiview::Manager do
   end
 
   describe '#dispatch' do
-    it 'should call specify version controller' do
-      status, headers, rack_body = subject.dispatch(env, 'test', 'index', 'v2')
+    it 'should dispatch if path match current request' do
+      status, headers, rack_body = subject.dispatch(env, 'test', 'index')
       expect(status).to eql(201)
       expect(rack_body.body).to eql('hello v2')
       expect(headers['X-Test']).to eql('xyz')
@@ -69,6 +69,18 @@ RSpec.describe Multiview::Manager do
       expect(v2_cls.counter).to eql(1)
 
       expect(env['multiview'][:version]).to eql('v2')
+    end
+
+    it 'should call specify version controller if give version' do
+      status, headers, rack_body = subject.dispatch(env, 'test', 'index', 'other')
+      expect(status).to eql(400)
+      expect(rack_body.body).to eql('hello other')
+      expect(headers['X-Test']).to eql('other')
+
+      expect(ctrls.sum(&:counter)).to eql(1)
+      expect(other_cls.counter).to eql(1)
+
+      expect(env['multiview'][:version]).to eql('other')
     end
   end
 
@@ -81,7 +93,20 @@ RSpec.describe Multiview::Manager do
       end
     end
 
-    it 'should call specify version controller' do
+    it 'should dispatch if path match current request' do
+      subject.redispatch(ctrl_obj, 'test', 'index')
+
+      expect(ctrl_obj.status).to eql(201)
+      expect(ctrl_obj.response_body.body).to eql('hello v2')
+      expect(ctrl_obj.headers['X-Test']).to eql('xyz')
+
+      expect(ctrls.sum(&:counter)).to eql(1)
+      expect(v2_cls.counter).to eql(1)
+
+      expect(env['multiview'][:version]).to eql('v2')
+    end
+
+    it 'should call specify version controller if give version' do
       subject.redispatch(ctrl_obj, 'test', 'index', 'other')
       expect(ctrl_obj.status).to eql(400)
       expect(ctrl_obj.response_body.body).to eql('hello other')

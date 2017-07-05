@@ -1,5 +1,9 @@
 require "multiview/version"
 
+require 'active_support'
+require 'active_support/core_ext/module/remove_method'
+require 'active_support/core_ext'
+
 module Multiview
   require 'multiview/manager'
 
