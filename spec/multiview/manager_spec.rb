@@ -35,7 +35,7 @@ RSpec.describe Multiview::Manager do
     v2_cls.class_eval do
       def index
         self.class.counter += 1
-        response.set_header 'X-Test', 'xyz'
+        response.headers['X-Test'] = 'xyz'
         render plain: 'hello v2', status: 201
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe Multiview::Manager do
 
       def index
         self.class.counter += 1
-        response.set_header 'X-Test', 'other'
+        response.headers['X-Test'] = 'other'
         render plain: 'hello other', status: 400
       end
     end
