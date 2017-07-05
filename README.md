@@ -54,6 +54,8 @@ resources :topics
 $multiview = Multiview::Manager.new({
   'topics' => 'v2'
 })
+
+# or use default manager: Multiview.manager
 ```
 
 
