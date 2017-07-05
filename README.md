@@ -20,7 +20,7 @@ And then execute:
 
 ## Usage
 
-### We project
+### Example Project
 
 `app/controllers/topics_controller.rb`
 
@@ -63,12 +63,13 @@ $multiview = Multiview::Manager.new({
 
 ### Redispatch request by filter of controller
 
-When get `/topics`, should redispatch to `V2::TopicsController`, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => nil}`, it will call `TopicsController`
+When get `/topics`, should redispatch to `V2::TopicsController#index`, rether than `TopicsController#index`
+If delete `V2::TopicsController` or change that config `{'topics' => nil}`, it will call `TopicsController#index`
 
 ```
 class ApplicationController < ActionController::Base
   before_aciton :set_view_version_filter
-
+.
   def set_view_version_filter
     $multiview.redispatch(self)
 
@@ -77,7 +78,7 @@ class ApplicationController < ActionController::Base
 
     # if exist V3::XxxController, should to call V3::XxxController
     # if not, should to call XxxController and prepend v3 views path
-    # when you just want to change something for views, you should not to redefined a controller for the version
+    # when you only want to change something for views, you should not to create V3::XxxController for the version, just to make a view folder `app/views/v3/xxx`
     # $multiview.redispatch(self, params[:controller], params[:action], 'v3')
   end
 end
