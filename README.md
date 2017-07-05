@@ -2,6 +2,8 @@
 
 Support multiple versions for Rails views
 
+[![Build Status](https://travis-ci.org/xiejiangzhi/multiview.svg?branch=master)](https://travis-ci.org/xiejiangzhi/multiview)
+
 
 ## Installation
 
@@ -61,7 +63,7 @@ $multiview = Multiview::Manager.new({
 
 ### Redispatch request by filter of controller
 
-When get `/topics`, should redispatch to V2::TopicsController, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => nil}`, it will call `TopicsController`
+When get `/topics`, should redispatch to `V2::TopicsController`, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => nil}`, it will call `TopicsController`
 
 ```
 class ApplicationController < ActionController::Base
@@ -126,7 +128,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/multiview. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/xiejiangzhi/multiview. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -134,4 +136,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 ## Code of Conduct
 
-Everyone interacting in the Multiview project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/multiview/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Multiview project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/xiejiangzhi/multiview/blob/master/CODE_OF_CONDUCT.md).
