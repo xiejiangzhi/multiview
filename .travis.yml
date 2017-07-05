@@ -1,5 +1,29 @@
-sudo: false
+sudo: enable
+dist: trusty
 language: ruby
+
+cache: bundler
+
 rvm:
-  - 2.2.6
-before_install: gem install bundler -v 1.15.1
+  - 2.1.10
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+
+gemfile:
+  - gemfiles/rails-4.1
+  - gemfiles/rails-4.2
+  - gemfiles/rails-5.0
+  - gemfiles/rails-5.1
+
+matrix:
+  exclude:
+    - {rvm: '2.1.10', gemfile: 'gemfiles/rails-5.0'}
+    - {rvm: '2.1.10', gemfile: 'gemfiles/rails-5.1'}
+    - {rvm: '2.4.1', gemfile: 'gemfiles/rails-4.1'}
+
+before_install:
+  - gem install bundler --no-doc
+
+script: bundle exec rspec
+
