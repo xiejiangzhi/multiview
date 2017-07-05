@@ -61,7 +61,7 @@ $multiview = Multiview::Manager.new({
 
 ### Redispatch request by filter of controller
 
-When get `/topics`, should redispatch to V2::TopicsController, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => 'v1'}`, it will call `TopicsController`
+When get `/topics`, should redispatch to V2::TopicsController, don't call `TopicsController#index`, if we delete `V2::TopicsController` or change that config `{'topics' => nil}`, it will call `TopicsController`
 
 ```
 class ApplicationController < ActionController::Base
