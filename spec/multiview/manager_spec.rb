@@ -125,6 +125,19 @@ RSpec.describe Multiview::Manager do
       subject.redispatch(ctrl_obj, 'test', 'my_action', 'asdf')
       expect(env['multiview'][:version]).to eql('asdf')
     end
+
+    it 'should not dispatch if env[multiview] exist' do
+      allow(Rails).to receive(:root).and_return(root_path)
+      ctrl_obj.request.env['multiview'] = {version: 'xxx'}.with_indifferent_access
+      expect(ctrl_obj).to receive(:prepend_view_path).with(root_path.join('app/views/v2'))
+
+      subject.redispatch(ctrl_obj, 'test', 'index')
+
+      # should not dispatch request
+      expect(ctrls.sum(&:counter)).to eql(0)
+
+      expect(env['multiview'][:version]).to eql('xxx')
+    end
   end
 end
 

@@ -33,7 +33,8 @@ module Multiview
       version ||= find_version(controller_path)
       return unless version
 
-      if result = dispatch(controller.request.env, controller_path, action_name, version)
+      result = try_dispatch(controller.request.env, controller_path, action_name, version)
+      if result
         res = controller.response
         status, headers, body = result
         res.status = status
@@ -50,12 +51,18 @@ module Multiview
       versions_map[path.to_sym]
     end
 
+
     private
 
     def load_version_view(controller, version)
       return if version.to_sym == :v1
       Rails.logger.warn("[Multiview] Prepend view path app/views/#{version}")
       controller.prepend_view_path(Rails.root.join("app/views/#{version}"))
+    end
+
+    def try_dispatch(env, path, action, version)
+      return if env['multiview']
+      dispatch(env, path, action, version)
     end
   end
 end
