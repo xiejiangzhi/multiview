@@ -112,7 +112,7 @@ end
 `config/application.rb`
 
 ```
-config.middleware.insert_before Rails.application.routes, MultiviewMiddleware
+config.middleware.use MultiviewMiddleware
 ```
 
 Limitation: Depend Rails.application.routes.recognize_path, if you have some specific routes, might it cannot work.
