@@ -120,6 +120,31 @@ Limitation: Depend Rails.application.routes.recognize_path, if you have some spe
 Anyway, it soloved that problem of `before_action`
 
 
+## Testing
+
+Beacuse we not define a route to our controller, when send test request, we should get a error like 'No route matches ...'.
+
+### RSpec
+
+```
+config.before(:each, type: :controller, multiview: true) do
+  # Fix testing route
+  route_path = described_class.controller_path.gsub(/^(v2|xxx|my_version)\//, '')
+  allow(described_class).to receive(:controller_path).and_return(route_path)
+
+  # disable redispatch
+  request.env['multiview'] = {'version' => 'xxx'}
+end
+```
+
+`spec/xxx/yyy_controller_spec.rb`
+
+```
+RSpec.describe Xxx::YyyController, multiview: true do
+  # write some testing
+end
+```
+
 
 ## Development
 
